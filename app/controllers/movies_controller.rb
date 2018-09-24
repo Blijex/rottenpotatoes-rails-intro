@@ -19,18 +19,6 @@ class MoviesController < ApplicationController
     @movie = Movie.find(id) # look up movie by unique ID
     # will render app/views/movies/show.<extension> by default
   end
-
-#def index
-    #@movies = Movie.all
-#end
-#case params[:sort]
-#     when 'title'
-#        @movies = Movie.order("title asc")
-#        @title_hilite = 'hilite'
-#    when 'release'
-#        @movies = Movie.order("release_date asc")
-#        @release_hilite = 'hilite'
-#    else
         
   def index
     case params[:sort]
@@ -41,7 +29,20 @@ class MoviesController < ApplicationController
         @movies = Movie.order(params[:sort])    
         @release_highlight = 'hilite'   #created a class in movies/index.html.haml to use this, 'hilite from default.css'
     else
-        @movies = Movie.all
+        #identify which boxes the user checked here
+        params[:ratings] ? @movies = Movie.where(rating: params[:ratings].keys) : 
+                           @movies = Movie.all
+                           #recall the ":" at the end of the line, and @movies = Movie.all formatting.
+                           #easier on the eyes, as well as conditional check
+    end
+    
+    #Check the movie ratings
+    #using class created in models/movie.rb
+    @all_ratings = Movie.get_ratings()
+
+    #restricts the data base query based on the users checked boxes    
+    if params[:ratings]
+        @movies = Movie.where(rating: params[:ratings].keys)
     end
   end
 
