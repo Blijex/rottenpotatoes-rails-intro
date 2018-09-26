@@ -23,6 +23,30 @@ class MoviesController < ApplicationController
   end
         
   def index
+    @all_ratings = Movie.get_ratings()
+    
+    unless params[:ratings].nil?
+        @checked_ratings = params[:ratings]
+        session[:checked_ratings] = @checked_ratings
+    end
+    
+    if params[:sort].nil?
+    else
+        session[:sort] = params[:sort]
+    end
+    
+    if params[:sort].nil? && params[:ratings].nil? && session[:checked_ratings]
+        @checked_ratings = session[:checked_ratings]
+        @sort = session[:sort]
+        flash.keep
+        redirect_to movies_path({order_by: @sort, ratings: @checked_ratings})
+    end
+    
+    @movies = Movie.all
+    
+    if session[:checked_ratings]
+        @movies = @movies.select{ |movie| session[:checked_ratings].include? movie.rating}
+    end
     
     case params[:sort]
     when 'title'
@@ -31,21 +55,9 @@ class MoviesController < ApplicationController
     when 'release_date'
         @movies = Movie.order(params[:sort])    
         @release_highlight = 'hilite'   #created a class in movies/index.html.haml to use this, 'hilite from default.css'
-   else
-        #identify which boxes the user checked here
-       params[:ratings] ? @movies = Movie.where(rating: params[:ratings].keys) : 
+    else
+        params[:ratings] ? @movies = Movie.where(rating: params[:ratings].keys) : 
                            @movies = Movie.all
-                           #recall the ":" at the end of the line, and @movies = Movie.all formatting.
-                           #easier on the eyes, as well as conditional check
-    end
-    
-    #Check the movie ratings
-    #using class created in models/movie.rb
-    @all_ratings = Movie.get_ratings()
-
-    #restricts the data base query based on the users checked boxes    
-    if params[:ratings]
-        @movies = Movie.where(rating: params[:ratings].keys)
     end
   end
 
