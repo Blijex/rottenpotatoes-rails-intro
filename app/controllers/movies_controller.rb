@@ -4,9 +4,11 @@
 #rake db:migrate
 #rake db:seed
 
-#QUESTION FOR COMPLETEION...PART 1 
-#are my id: title_header and id: release_date_header under index.html.haml correct
-#for the "IMPORTANT for grading purposes: Secion"
+#if all checkboxes are unchecked, nothing should show
+#sort title and rating while under certain ratings are clicked
+#maintain the rating checkbox when you refresh
+#remember checkboxes when we go to more about movie, then use the back to movie link
+#"Should" fix the sort under a rating issue as well (ie, sort the rating, then sort the movie title inside that rating)
 
 class MoviesController < ApplicationController
 
@@ -21,6 +23,7 @@ class MoviesController < ApplicationController
   end
         
   def index
+    
     case params[:sort]
     when 'title'
         @movies = Movie.order(params[:sort])
@@ -28,9 +31,9 @@ class MoviesController < ApplicationController
     when 'release_date'
         @movies = Movie.order(params[:sort])    
         @release_highlight = 'hilite'   #created a class in movies/index.html.haml to use this, 'hilite from default.css'
-    else
+   else
         #identify which boxes the user checked here
-        params[:ratings] ? @movies = Movie.where(rating: params[:ratings].keys) : 
+       params[:ratings] ? @movies = Movie.where(rating: params[:ratings].keys) : 
                            @movies = Movie.all
                            #recall the ":" at the end of the line, and @movies = Movie.all formatting.
                            #easier on the eyes, as well as conditional check
