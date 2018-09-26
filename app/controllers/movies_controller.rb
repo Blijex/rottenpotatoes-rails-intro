@@ -36,9 +36,9 @@ class MoviesController < ApplicationController
     end
     
     if params[:sort].nil? && params[:ratings].nil? && session[:checked_ratings]
-        @checked_ratings = session[:checked_ratings]
-        @sort = session[:sort]
-        flash.keep
+        @checked_ratings = session[:checked_ratings]        #basically allocate in memory
+        @sort = session[:sort]      #basically allocate in memory
+        flash.keep      #save to remember!
         redirect_to movies_path({order_by: @sort, ratings: @checked_ratings})
     end
     
@@ -50,10 +50,10 @@ class MoviesController < ApplicationController
     
     case session[:sort]
     when 'title'            #highglights the movie title column when selected
-        @movies = @movies.sort! { |a,b| a.title <=> b.title}
+        @movies = @movies.sort { |a,b| a.title <=> b.title}
         @movie_highlight = "hilite" #created a class in movies/index.html.haml to use this, 'hilite from default.css'
     when 'release_date'     #highlights the release date column when selected
-        @movies = @movies.sort! { |a,b| a.release_date <=> b.release_date }
+        @movies = @movies.sort { |a,b| a.release_date <=> b.release_date }
         @release_highlight = "hilite"   #created a class in movies/index.html.haml to use this, 'hilite from default.css'
     else 
         session[:sort] == "release_date"
