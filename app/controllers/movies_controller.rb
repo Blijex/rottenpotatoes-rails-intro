@@ -42,22 +42,21 @@ class MoviesController < ApplicationController
         redirect_to movies_path({order_by: @sort, ratings: @checked_ratings})
     end
     
-    @movies = Movie.all
+    @movies = Movie.all     #default display
     
     if session[:checked_ratings]
         @movies = @movies.select{ |movie| session[:checked_ratings].include? movie.rating}
     end
     
-    case params[:sort]
-    when 'title'
-        @movies = Movie.order(params[:sort])
-        @movie_highlight = 'hilite'     #created a class in movies/index.html.haml to use this, 'hilite from default.css'
-    when 'release_date'
-        @movies = Movie.order(params[:sort])    
-        @release_highlight = 'hilite'   #created a class in movies/index.html.haml to use this, 'hilite from default.css'
-    else
-        params[:ratings] ? @movies = Movie.where(rating: params[:ratings].keys) : 
-                           @movies = Movie.all
+    case session[:sort]
+    when 'title'            #highglights the movie title column when selected
+        @movies = @movies.sort! { |a,b| a.title <=> b.title}
+        @movie_highlight = "hilite" #created a class in movies/index.html.haml to use this, 'hilite from default.css'
+    when 'release_date'     #highlights the release date column when selected
+        @movies = @movies.sort! { |a,b| a.release_date <=> b.release_date }
+        @release_highlight = "hilite"   #created a class in movies/index.html.haml to use this, 'hilite from default.css'
+    else 
+        session[:sort] == "release_date"
     end
   end
 
