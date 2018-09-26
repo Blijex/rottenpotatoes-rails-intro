@@ -39,7 +39,7 @@ class MoviesController < ApplicationController
         @checked_ratings = session[:checked_ratings]        #basically allocate in memory
         @sort = session[:sort]      #basically allocate in memory
         flash.keep      #save to remember!
-        redirect_to movies_path({order_by: @sort, ratings: @checked_ratings})
+        redirect_to movies_path({order_by: @sort, ratings: @checked_ratings})   #will let the checkboxes go back to previous state if none is selected
     end
     
     @movies = Movie.all     #default display
